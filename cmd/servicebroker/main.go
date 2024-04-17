@@ -12,15 +12,11 @@ import (
 
 	"github.com/golang/glog"
 	prom "github.com/prometheus/client_golang/prometheus"
-	"github.com/shawn-hurley/osb-broker-k8s-lib/middleware"
-	clientset "k8s.io/client-go/kubernetes"
-	clientrest "k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/pmorie/osb-broker-lib/pkg/metrics"
-	"github.com/pmorie/osb-broker-lib/pkg/rest"
-	"github.com/pmorie/osb-broker-lib/pkg/server"
-	"github.com/pmorie/osb-starter-pack/pkg/broker"
+	"github.com/gogolok/osb-broker-lib/pkg/metrics"
+	"github.com/gogolok/osb-broker-lib/pkg/rest"
+	"github.com/gogolok/osb-broker-lib/pkg/server"
+	"github.com/gogolok/osb-starter-pack/pkg/broker"
 )
 
 var options struct {
@@ -43,7 +39,6 @@ func init() {
 	flag.StringVar(&options.TLSKeyFile, "tls-private-key-file", "", "File containing the default x509 private key matching --tls-cert-file.")
 	flag.StringVar(&options.TLSCert, "tlsCert", "", "base-64 encoded PEM block to use as the certificate for TLS. If '--tlsCert' is used, then '--tlsKey' must also be used.")
 	flag.StringVar(&options.TLSKey, "tlsKey", "", "base-64 encoded PEM block to use as the private key matching the TLS certificate.")
-	flag.BoolVar(&options.AuthenticateK8SToken, "authenticate-k8s-token", false, "option to specify if the broker should validate the bearer auth token with kubernetes")
 	flag.StringVar(&options.KubeConfig, "kube-config", "", "specify the kube config path to be used")
 	broker.AddFlags(&options.Options)
 	flag.Parse()
@@ -92,24 +87,6 @@ func runWithContext(ctx context.Context) error {
 	}
 
 	s := server.New(api, reg)
-	if options.AuthenticateK8SToken {
-		// get k8s client
-		k8sClient, err := getKubernetesClient(options.KubeConfig)
-		if err != nil {
-			return err
-		}
-		// Create a User Info Authorizer.
-		authz := middleware.SARUserInfoAuthorizer{
-			SAR: k8sClient.AuthorizationV1().SubjectAccessReviews(),
-		}
-		// create TokenReviewMiddleware
-		tr := middleware.TokenReviewMiddleware{
-			TokenReview: k8sClient.Authentication().TokenReviews(),
-			Authorizer:  authz,
-		}
-		// Use TokenReviewMiddleware.
-		s.Router.Use(tr.Middleware)
-	}
 
 	glog.Infof("Starting broker!")
 
@@ -129,28 +106,6 @@ func runWithContext(ctx context.Context) error {
 		}
 	}
 	return err
-}
-
-func getKubernetesClient(kubeConfigPath string) (clientset.Interface, error) {
-	var clientConfig *clientrest.Config
-	var err error
-	if kubeConfigPath == "" {
-		clientConfig, err = clientrest.InClusterConfig()
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		config, err := clientcmd.LoadFromFile(kubeConfigPath)
-		if err != nil {
-			return nil, err
-		}
-
-		clientConfig, err = clientcmd.NewDefaultClientConfig(*config, &clientcmd.ConfigOverrides{}).ClientConfig()
-		if err != nil {
-			return nil, err
-		}
-	}
-	return clientset.NewForConfig(clientConfig)
 }
 
 func cancelOnInterrupt(ctx context.Context, f context.CancelFunc) {

@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/gogolok/osb-broker-lib/pkg/broker"
 	"github.com/golang/glog"
-	"github.com/pmorie/osb-broker-lib/pkg/broker"
 
-	osb "github.com/pmorie/go-open-service-broker-client/v2"
 	"reflect"
+
+	osb "sigs.k8s.io/go-open-service-broker-client/v2"
 )
 
 // NewBusinessLogic is a hook that is called with the Options the program is run
@@ -63,6 +64,9 @@ func (b *BusinessLogic) GetCatalog(c *broker.RequestContext) (*broker.CatalogRes
 						ID:          "86064792-7ea2-467b-af93-ac9694d96d5b",
 						Description: "The default plan for the starter pack example service",
 						Free:        truePtr(),
+						Metadata: map[string]interface{}{
+							"hello": "world",
+						},
 						Schemas: &osb.Schemas{
 							ServiceInstance: &osb.ServiceInstanceSchema{
 								Create: &osb.InputParametersSchema{
@@ -121,7 +125,7 @@ func (b *BusinessLogic) Provision(request *osb.ProvisionRequest, c *broker.Reque
 			// Instance ID in use, this is a conflict.
 			description := "InstanceID in use"
 			return nil, osb.HTTPStatusCodeError{
-				StatusCode: http.StatusConflict,
+				StatusCode:  http.StatusConflict,
 				Description: &description,
 			}
 		}
