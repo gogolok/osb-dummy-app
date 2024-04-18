@@ -4,13 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"path"
 	"strconv"
 	"syscall"
 
-	"github.com/golang/glog"
 	prom "github.com/prometheus/client_golang/prometheus"
 
 	"github.com/gogolok/osb-broker-lib/pkg/metrics"
@@ -43,7 +43,8 @@ func init() {
 
 func main() {
 	if err := run(); err != nil && err != context.Canceled && err != context.DeadlineExceeded {
-		glog.Fatalln(err)
+		slog.Error("error", "err", err)
+		os.Exit(1)
 	}
 }
 
@@ -85,20 +86,20 @@ func runWithContext(ctx context.Context) error {
 
 	s := server.New(api, reg)
 
-	glog.Infof("Starting broker!")
+	slog.Info("Starting broker!")
 
 	if options.Insecure {
 		err = s.Run(ctx, addr)
 	} else {
 		if options.TLSCert != "" && options.TLSKey != "" {
-			glog.V(4).Infof("Starting secure broker with TLS cert and key data")
+			slog.Info("Starting secure broker with TLS cert and key data")
 			err = s.RunTLS(ctx, addr, options.TLSCert, options.TLSKey)
 		} else {
 			if options.TLSCertFile == "" || options.TLSKeyFile == "" {
-				glog.Error("unable to run securely without TLS Certificate and Key. Please review options and if running with TLS, specify --tls-cert-file and --tls-private-key-file or --tlsCert and --tlsKey.")
+				slog.Error("unable to run securely without TLS Certificate and Key. Please review options and if running with TLS, specify --tls-cert-file and --tls-private-key-file or --tlsCert and --tlsKey.")
 				return nil
 			}
-			glog.V(4).Infof("Starting secure broker with file based TLS cert and key")
+			slog.Info("Starting secure broker with file based TLS cert and key")
 			err = s.RunTLSWithTLSFiles(ctx, addr, options.TLSCertFile, options.TLSKeyFile)
 		}
 	}
@@ -112,7 +113,7 @@ func cancelOnInterrupt(ctx context.Context, f context.CancelFunc) {
 	for {
 		select {
 		case <-term:
-			glog.Infof("Received SIGTERM, exiting gracefully...")
+			slog.Info("Received SIGTERM, exiting gracefully...")
 			f()
 			os.Exit(0)
 		case <-ctx.Done():
