@@ -158,9 +158,16 @@ func (b *BusinessLogic) Deprovision(request *osb.DeprovisionRequest, c *broker.R
 }
 
 func (b *BusinessLogic) LastOperation(request *osb.LastOperationRequest, c *broker.RequestContext) (*broker.LastOperationResponse, error) {
+	description := "Some description"
 	// Your last-operation business logic goes here
+	lor := broker.LastOperationResponse{
+		LastOperationResponse: osb.LastOperationResponse{
+			State:       osb.StateSucceeded,
+			Description: &description,
+		},
+	}
 
-	return nil, nil
+	return &lor, nil
 }
 
 func (b *BusinessLogic) Bind(request *osb.BindRequest, c *broker.RequestContext) (*broker.BindResponse, error) {
