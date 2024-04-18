@@ -221,3 +221,11 @@ type exampleInstance struct {
 func (i *exampleInstance) Match(other *exampleInstance) bool {
 	return reflect.DeepEqual(i, other)
 }
+
+func (b *BusinessLogic) BindingLastOperation(request *osb.BindingLastOperationRequest, c *broker.RequestContext) (*broker.LastOperationResponse, error) {
+	return nil, nil // FIXME: not implemented
+}
+
+func (b *BusinessLogic) GetBinding(request *osb.GetBindingRequest, c *broker.RequestContext) (*broker.GetBindingResponse, error) {
+	return nil, nil // FIXME: not implemented
+}
