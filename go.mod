@@ -3,7 +3,7 @@ module github.com/gogolok/osb-starter-pack
 go 1.22.1
 
 require (
-	github.com/gogolok/osb-broker-lib v0.0.0-20240417223126-7f68f778bdb4
+	github.com/gogolok/osb-broker-lib v0.0.0-20240418123027-0a0cc7f68065
 	github.com/golang/glog v1.2.1
 	github.com/prometheus/client_golang v1.19.0
 	sigs.k8s.io/go-open-service-broker-client/v2 v2.0.0-20210928082444-d912fc53f8bd
