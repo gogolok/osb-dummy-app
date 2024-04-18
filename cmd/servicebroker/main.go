@@ -22,14 +22,12 @@ import (
 var options struct {
 	broker.Options
 
-	Port                 int
-	Insecure             bool
-	TLSCert              string
-	TLSKey               string
-	TLSCertFile          string
-	TLSKeyFile           string
-	AuthenticateK8SToken bool
-	KubeConfig           string
+	Port        int
+	Insecure    bool
+	TLSCert     string
+	TLSKey      string
+	TLSCertFile string
+	TLSKeyFile  string
 }
 
 func init() {
@@ -39,7 +37,6 @@ func init() {
 	flag.StringVar(&options.TLSKeyFile, "tls-private-key-file", "", "File containing the default x509 private key matching --tls-cert-file.")
 	flag.StringVar(&options.TLSCert, "tlsCert", "", "base-64 encoded PEM block to use as the certificate for TLS. If '--tlsCert' is used, then '--tlsKey' must also be used.")
 	flag.StringVar(&options.TLSKey, "tlsKey", "", "base-64 encoded PEM block to use as the private key matching the TLS certificate.")
-	flag.StringVar(&options.KubeConfig, "kube-config", "", "specify the kube config path to be used")
 	broker.AddFlags(&options.Options)
 	flag.Parse()
 }
