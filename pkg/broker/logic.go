@@ -1,11 +1,11 @@
 package broker
 
 import (
+	"log/slog"
 	"net/http"
 	"sync"
 
 	"github.com/gogolok/osb-broker-lib/pkg/broker"
-	"github.com/golang/glog"
 
 	"reflect"
 
@@ -93,7 +93,7 @@ func (b *BusinessLogic) GetCatalog(c *broker.RequestContext) (*broker.CatalogRes
 		},
 	}
 
-	glog.Infof("catalog response: %#+v", osbResponse)
+	slog.Info("catalog response", "osbReponse", osbResponse)
 
 	response.CatalogResponse = *osbResponse
 
