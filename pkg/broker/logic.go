@@ -177,6 +177,7 @@ func (b *BusinessLogic) Bind(request *osb.BindRequest, c *broker.RequestContext)
 
 	instance, ok := b.instances[request.InstanceID]
 	if !ok {
+		slog.Error("instance not found", "instance", request.InstanceID)
 		return nil, osb.HTTPStatusCodeError{
 			StatusCode: http.StatusNotFound,
 		}
@@ -228,9 +229,28 @@ func (i *exampleInstance) Match(other *exampleInstance) bool {
 }
 
 func (b *BusinessLogic) BindingLastOperation(request *osb.BindingLastOperationRequest, c *broker.RequestContext) (*broker.LastOperationResponse, error) {
-	return nil, nil // FIXME: not implemented
+	lor := broker.LastOperationResponse{
+		LastOperationResponse: osb.LastOperationResponse{
+			State: osb.StateSucceeded,
+		},
+	}
+
+	return &lor, nil
 }
 
 func (b *BusinessLogic) GetBinding(request *osb.GetBindingRequest, c *broker.RequestContext) (*broker.GetBindingResponse, error) {
-	return nil, nil // FIXME: not implemented
+	response := broker.GetBindingResponse{
+		GetBindingResponse: osb.GetBindingResponse{
+			Credentials: map[string]interface{}{
+				"uri":      "mysql://mysqluser:pass@mysqlhost:3306/dbname",
+				"username": "mysqluser",
+				"password": "pass",
+				"host":     "mysqlhost",
+				"port":     float64(3306),
+				"database": "dbname",
+			},
+		},
+	}
+
+	return &response, nil
 }
