@@ -1,4 +1,4 @@
-module github.com/gogolok/osb-starter-pack
+module github.com/gogolok/osb-dummy-app
 
 go 1.22.1
 

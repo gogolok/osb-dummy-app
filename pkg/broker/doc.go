@@ -7,4 +7,4 @@
 //     business logic
 //   - The NewBusinessLogic function, which creates a BusinessLogic from the
 //     Options the program is run with
-package broker // import "github.com/gogolok/osb-starter-pack/pkg/broker"
+package broker // import "github.com/gogolok/osb-dummy-app/pkg/broker"

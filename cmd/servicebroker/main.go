@@ -16,7 +16,7 @@ import (
 	"github.com/gogolok/osb-broker-lib/pkg/metrics"
 	"github.com/gogolok/osb-broker-lib/pkg/rest"
 	"github.com/gogolok/osb-broker-lib/pkg/server"
-	"github.com/gogolok/osb-starter-pack/pkg/broker"
+	"github.com/gogolok/osb-dummy-app/pkg/broker"
 )
 
 var options struct {

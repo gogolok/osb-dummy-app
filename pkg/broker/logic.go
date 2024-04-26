@@ -49,20 +49,20 @@ func (b *BusinessLogic) GetCatalog(c *broker.RequestContext) (*broker.CatalogRes
 	osbResponse := &osb.CatalogResponse{
 		Services: []osb.Service{
 			{
-				Name:          "example-starter-pack-service",
-				ID:            "4f6e6cf6-ffdd-425f-a2c7-3c9258ad246a",
-				Description:   "The example service from the osb starter pack!",
+				Name:          "example-broker",
+				ID:            "4f6e6cf6-33dd-425f-a2c7-3c9258ad246a",
+				Description:   "An example service",
 				Bindable:      true,
 				PlanUpdatable: truePtr(),
 				Metadata: map[string]interface{}{
-					"displayName": "Example starter pack service",
+					"displayName": "Example service",
 					"imageUrl":    "https://avatars2.githubusercontent.com/u/19862012?s=200&v=4",
 				},
 				Plans: []osb.Plan{
 					{
 						Name:        "default",
 						ID:          "86064792-7ea2-467b-af93-ac9694d96d5b",
-						Description: "The default plan for the starter pack example service",
+						Description: "The default plan for the example service",
 						Free:        truePtr(),
 						Metadata: map[string]interface{}{
 							"hello": "world",

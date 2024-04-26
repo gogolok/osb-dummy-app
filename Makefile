@@ -1,5 +1,5 @@
-build: ## Builds the starter pack
-	go build github.com/gogolok/osb-starter-pack/cmd/servicebroker
+build: ## Builds the dummy app
+	go build github.com/gogolok/osb-dummy-app/cmd/servicebroker
 
 test: ## Runs the tests
 	go test -v $(shell go list ./... | grep -v /vendor/ | grep -v /test/)
