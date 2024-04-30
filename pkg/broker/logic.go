@@ -16,13 +16,25 @@ import (
 // with. NewBusinessLogic is the place where you will initialize your
 // BusinessLogic the parameters passed in.
 func NewBusinessLogic(o Options) (*BusinessLogic, error) {
+	b := BusinessLogic{
+		async:     true,
+		instances: make(map[string]*exampleInstance, 10),
+	}
+
+	// HACK: Enable if you have existing instances.
+	instanceId := "9ca5dd24-5010-4c7f-89e9-71f67d35fd6d"
+	exampleInstance := &exampleInstance{
+		ID:        instanceId,
+		ServiceID: "serviceId",
+		PlanID:    "planId",
+		Params:    map[string]interface{}{},
+	}
+	b.instances[instanceId] = exampleInstance
+
 	// For example, if your BusinessLogic requires a parameter from the command
 	// line, you would unpack it from the Options and set it on the
 	// BusinessLogic here.
-	return &BusinessLogic{
-		async:     o.Async,
-		instances: make(map[string]*exampleInstance, 10),
-	}, nil
+	return &b, nil
 }
 
 // BusinessLogic provides an implementation of the broker.BusinessLogic
@@ -115,6 +127,7 @@ func (b *BusinessLogic) Provision(request *osb.ProvisionRequest, c *broker.Reque
 		PlanID:    request.PlanID,
 		Params:    request.Parameters,
 	}
+	slog.Info("New example instance", "instance", exampleInstance)
 
 	// Check to see if this is the same instance
 	if i := b.instances[request.InstanceID]; i != nil {
@@ -158,6 +171,17 @@ func (b *BusinessLogic) Deprovision(request *osb.DeprovisionRequest, c *broker.R
 }
 
 func (b *BusinessLogic) LastOperation(request *osb.LastOperationRequest, c *broker.RequestContext) (*broker.LastOperationResponse, error) {
+	b.Lock()
+	defer b.Unlock()
+
+	_, ok := b.instances[request.InstanceID]
+	if !ok {
+		slog.Error("instance not found", "instance", request.InstanceID)
+		return nil, osb.HTTPStatusCodeError{
+			StatusCode: http.StatusNotFound,
+		}
+	}
+
 	// Your last-operation business logic goes here
 	lor := broker.LastOperationResponse{
 		LastOperationResponse: osb.LastOperationResponse{
